@@ -49,6 +49,9 @@ pub async fn tag(
 			}
 		}
 
+		e = e.title(&frontmatter.title);
+		e = e.description(&tag.content);
+
 		e
 	};
 
