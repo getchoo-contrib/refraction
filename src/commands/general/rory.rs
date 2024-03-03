@@ -7,7 +7,7 @@ use poise::serenity_prelude::{CreateEmbed, CreateEmbedFooter};
 use poise::CreateReply;
 
 /// Gets a Rory photo!
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(slash_command)]
 pub async fn rory(
 	ctx: Context<'_>,
 	#[description = "specify a Rory ID"] id: Option<u64>,

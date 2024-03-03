@@ -13,7 +13,7 @@ include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 static TAGS: Lazy<Vec<Tag>> = Lazy::new(|| serde_json::from_str(env!("TAGS")).unwrap());
 
 /// Send a tag
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(slash_command)]
 pub async fn tag(
 	ctx: Context<'_>,
 	#[description = "the copypasta you want to send"] name: Choice,

@@ -6,7 +6,6 @@ use poise::serenity_prelude::{CreateEmbed, CreateEmbedAuthor, CreateMessage};
 /// Say something through the bot
 #[poise::command(
 	slash_command,
-	prefix_command,
 	ephemeral,
 	default_member_permissions = "MODERATE_MEMBERS",
 	required_permissions = "MODERATE_MEMBERS"
