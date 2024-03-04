@@ -61,6 +61,7 @@ pub async fn handle(ctx: &Context, message: &Message, data: &Data) -> Result<()>
 
 	let allowed_mentions = CreateAllowedMentions::new().replied_user(true);
 	let message = CreateMessage::new()
+		.reference_message(message)
 		.allowed_mentions(allowed_mentions)
 		.embed(embed);
 
