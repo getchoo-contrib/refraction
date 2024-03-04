@@ -39,16 +39,11 @@ fn main() {
 
             Tag {
                 content,
-                file_name: name,
+                id: name.replace(".md", ""),
                 frontmatter: data,
             }
         })
         .collect();
-
-	let formatted_names: Vec<String> = tags
-		.iter()
-		.map(|t| t.file_name.replace(".md", "").replace('-', "_"))
-		.collect();
 
 	let tag_choice = format!(
 		r#"
@@ -57,7 +52,11 @@ fn main() {
     pub enum Choice {{
     {}
     }}"#,
-		formatted_names.join(",\n")
+        tags
+			.iter()
+			.map(|t| format!("#[name = \"{}\"]\n{}", t.id, t.id.replace("-", "_")))
+			.collect::<Vec<String>>()
+			.join(",\n")
 	);
 
 	let to_str = format!(
@@ -70,11 +69,10 @@ fn main() {
     }}
     }}
     "#,
-		formatted_names
+        tags
 			.iter()
-			.map(|n| {
-				let file_name = n.replace('_', "-") + ".md";
-				format!("Self::{n} => \"{file_name}\",")
+			.map(|t| {
+				format!("Self::{} => \"{}\",", t.id.replace("-", "_"), t.id)
 			})
 			.collect::<Vec<String>>()
 			.join("\n")

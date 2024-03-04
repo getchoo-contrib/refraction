@@ -21,11 +21,11 @@ pub async fn tag(
 ) -> Result<()> {
 	trace!("Running tag command");
 
-	let tag_file = name.as_str();
+	let tag_id = name.as_str();
 	let tag = TAGS
 		.iter()
-		.find(|t| t.file_name == tag_file)
-		.ok_or_else(|| eyre!("Tried to get non-existent tag: {tag_file}"))?;
+		.find(|t| t.id == tag_id)
+		.ok_or_else(|| eyre!("Tried to get non-existent tag: {tag_id}"))?;
 
 	let frontmatter = &tag.frontmatter;
 
