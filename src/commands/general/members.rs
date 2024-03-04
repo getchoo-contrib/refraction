@@ -6,21 +6,14 @@ use poise::serenity_prelude::CreateEmbed;
 use poise::CreateReply;
 
 /// Returns the number of members in the server
-#[poise::command(slash_command)]
+#[poise::command(slash_command, guild_only = true)]
 pub async fn members(ctx: Context<'_>) -> Result<()> {
 	trace!("Running members command");
-	let guild = ctx.guild().ok_or_eyre("Couldn't fetch guild!")?.to_owned();
-
-	let count = guild.member_count;
-	let online = if let Some(count) = guild.approximate_presence_count {
-		count.to_string()
-	} else {
-		"Undefined".to_string()
-	};
+	let guild = ctx.http().get_guild_with_counts(ctx.guild_id().unwrap()).await?;
 
 	let embed = CreateEmbed::new()
-		.title(format!("{count} total members!"))
-		.description(format!("{online} online members"))
+		.title(format!("{} total members!", guild.approximate_member_count.ok_or_eyre("Missing member count")?))
+		.description(format!("{} online members", guild.approximate_presence_count.ok_or_eyre("Missing online count")?))
 		.color(consts::COLORS["blue"]);
 	let reply = CreateReply::default().embed(embed);
 
