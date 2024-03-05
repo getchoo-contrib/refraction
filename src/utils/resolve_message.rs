@@ -10,7 +10,7 @@ use poise::serenity_prelude::{
 use regex::Regex;
 
 static MESSAGE_PATTERN: Lazy<Regex> = Lazy::new(|| {
-	Regex::new(r"/(https?:\/\/)?(?:canary\.|ptb\.)?discord(?:app)?\.com\/channels\/(?<serverId>\d+)\/(?<channelId>\d+)\/(?<messageId>\d+)/g;").unwrap()
+	Regex::new(r"(?:https?:\/\/)?(?:canary\.|ptb\.)?discord(?:app)?\.com\/channels\/(?<server_id>\d+)\/(?<channel_id>\d+)\/(?<message_id>\d+)").unwrap()
 });
 
 fn find_first_image(msg: &Message) -> Option<String> {
@@ -76,8 +76,12 @@ pub async fn resolve(ctx: &Context, msg: &Message) -> Result<Vec<CreateEmbed>> {
 				format!("Couldn't get message from ID {message_id} in channel {channel_id}!")
 			})?;
 
-		let author = CreateEmbedAuthor::new(original_message.author.tag())
-			.icon_url(original_message.author.default_avatar_url());
+		let author = CreateEmbedAuthor::new(original_message.author.tag()).icon_url(
+			original_message
+				.author
+				.avatar_url()
+				.unwrap_or_else(|| original_message.author.default_avatar_url()),
+		);
 		let footer = CreateEmbedFooter::new(format!("#{}", channel.name));
 
 		let mut embed = CreateEmbed::new()
