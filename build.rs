@@ -54,7 +54,7 @@ fn main() {
     }}"#,
         tags
 			.iter()
-			.map(|t| format!("#[name = \"{}\"]\n{}", t.id, t.id.replace("-", "_")))
+			.map(|t| format!("#[name = \"{}\"]\n{}", t.id, t.id.replace('-', "_")))
 			.collect::<Vec<String>>()
 			.join(",\n")
 	);
@@ -72,7 +72,7 @@ fn main() {
         tags
 			.iter()
 			.map(|t| {
-				format!("Self::{} => \"{}\",", t.id.replace("-", "_"), t.id)
+				format!("Self::{} => \"{}\",", t.id.replace('-', "_"), t.id)
 			})
 			.collect::<Vec<String>>()
 			.join("\n")
