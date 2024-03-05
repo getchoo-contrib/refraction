@@ -10,7 +10,7 @@ use poise::serenity_prelude::{CreateEmbed, CreateEmbedAuthor, CreateMessage};
 	default_member_permissions = "MODERATE_MEMBERS",
 	required_permissions = "MODERATE_MEMBERS"
 )]
-pub async fn say(ctx: Context<'_>, #[description = "Just content?"] content: String) -> Result<()> {
+pub async fn say(ctx: Context<'_>, #[description = "the message content"] content: String) -> Result<()> {
 	let guild = ctx.guild().ok_or_eyre("Couldn't get guild!")?.to_owned();
 	let channel = ctx
 		.guild_channel()

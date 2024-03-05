@@ -16,8 +16,8 @@ static TAGS: Lazy<Vec<Tag>> = Lazy::new(|| serde_json::from_str(env!("TAGS")).un
 #[poise::command(slash_command)]
 pub async fn tag(
 	ctx: Context<'_>,
-	#[description = "the copypasta you want to send"] name: Choice,
-	user: Option<User>,
+	#[description = "the tag to send"] name: Choice,
+	#[description = "a user to mention"] user: Option<User>,
 ) -> Result<()> {
 	trace!("Running tag command");
 
