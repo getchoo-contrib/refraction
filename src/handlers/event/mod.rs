@@ -57,7 +57,7 @@ pub async fn handle(
 		}
 
 		FullEvent::ThreadCreate { thread } => {
-			support_onboard::handle(ctx, thread, framework).await?;
+			support_onboard::handle(ctx, thread).await?;
 		}
 
 		_ => {}

@@ -10,27 +10,14 @@ use poise::FrameworkContext;
 pub async fn handle(
 	ctx: &Context,
 	thread: &GuildChannel,
-	framework: FrameworkContext<'_, Data, Report>,
 ) -> Result<()> {
 	if thread.kind != ChannelType::PublicThread {
 		trace!("Not doing support onboard in non-public thread channel");
 		return Ok(());
 	}
 
-	// TODO @getchoo: it seems like we can get multiple ThreadCreate events
-	// should probably figure out a better way to not repeat ourselves here
-	if thread
-		.members(ctx)
-		.wrap_err_with(|| {
-			format!(
-				"Couldn't fetch members from thread {}! Not sending a support onboard message.",
-				thread.id
-			)
-		})?
-		.iter()
-		.any(|member| member.user.id == framework.bot_id)
-	{
-		debug!("Not sending support onboard message...I think i've been here before :p");
+	if !thread.last_message_id.is_none() {
+		debug!("Ignoring duplicate thread creation event");
 		return Ok(());
 	}
 
