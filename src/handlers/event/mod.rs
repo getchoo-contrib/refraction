@@ -8,14 +8,13 @@ use poise::FrameworkContext;
 mod analyze_logs;
 mod delete_on_reaction;
 mod eta;
-mod expand_link;
 pub mod pluralkit;
 mod support_onboard;
 
 pub async fn handle(
 	ctx: &Context,
 	event: &FullEvent,
-	framework: FrameworkContext<'_, Data, Report>,
+	_framework: FrameworkContext<'_, Data, Report>,
 	data: &Data,
 ) -> Result<()> {
 	match event {
@@ -48,7 +47,6 @@ pub async fn handle(
 			}
 
 			eta::handle(ctx, new_message).await?;
-			expand_link::handle(ctx, new_message).await?;
 			analyze_logs::handle(ctx, new_message, data).await?;
 		}
 

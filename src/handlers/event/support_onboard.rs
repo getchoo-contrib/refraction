@@ -1,11 +1,11 @@
-use crate::Data;
 
-use eyre::{eyre, Context as _, OptionExt, Report, Result};
+
+use eyre::{eyre, OptionExt, Result};
 use log::{debug, trace};
 use poise::serenity_prelude::{
 	ChannelType, Context, CreateAllowedMentions, CreateMessage, GuildChannel,
 };
-use poise::FrameworkContext;
+
 
 pub async fn handle(
 	ctx: &Context,
@@ -16,7 +16,7 @@ pub async fn handle(
 		return Ok(());
 	}
 
-	if !thread.last_message_id.is_none() {
+	if thread.last_message_id.is_some() {
 		debug!("Ignoring duplicate thread creation event");
 		return Ok(());
 	}
