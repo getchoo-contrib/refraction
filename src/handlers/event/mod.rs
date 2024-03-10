@@ -30,7 +30,7 @@ pub async fn handle(
 
 		FullEvent::Message { new_message } => {
 			// ignore new messages from bots
-			// NOTE: the webhook_id check allows us to still respond to PK users
+			// note: the webhook_id check allows us to still respond to PK users
 			if new_message.author.bot && new_message.webhook_id.is_none() {
 				trace!("Ignoring message {} from bot", new_message.id);
 				return Ok(());
