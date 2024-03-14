@@ -2,7 +2,7 @@ use crate::{api, Data};
 use std::time::Duration;
 
 use eyre::Result;
-use log::trace;
+use log::{debug, trace};
 use poise::serenity_prelude::{Context, Message};
 use tokio::time::sleep;
 
@@ -25,7 +25,7 @@ pub async fn handle(_: &Context, msg: &Message, data: &Data) -> Result<()> {
 		return Ok(());
 	}
 
-	trace!(
+	debug!(
 		"Message {} has a webhook ID. Checking if it was sent through PluralKit",
 		msg.id
 	);
