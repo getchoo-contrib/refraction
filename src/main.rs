@@ -26,6 +26,7 @@ mod consts;
 mod handlers;
 mod storage;
 mod tags;
+mod utils;
 
 use config::Config;
 use storage::Storage;
