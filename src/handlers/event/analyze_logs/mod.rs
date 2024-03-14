@@ -43,7 +43,9 @@ pub async fn handle(ctx: &Context, message: &Message, data: &Data) -> Result<()>
 		let mut e = CreateEmbed::new().title("Log analysis");
 
 		if issues.is_empty() {
-			e = e.color(COLORS["green"]).description("No issues found automatically");
+			e = e
+				.color(COLORS["green"])
+				.description("No issues found automatically");
 		} else {
 			e = e.color(COLORS["red"]);
 

@@ -1,3 +1,4 @@
+use std::io::Write;
 use std::path::Path;
 use std::{env, fs};
 
@@ -9,7 +10,8 @@ include!("src/tags.rs");
 #[allow(dead_code)]
 fn main() {
 	let out_dir = env::var_os("OUT_DIR").unwrap();
-	let generated = Path::new(&out_dir).join("generated.rs");
+	let dest_file = Path::new(&out_dir).join("generated.rs");
+	let mut file = fs::File::create(dest_file).unwrap();
 
 	let tag_files: Vec<String> = fs::read_dir(TAG_DIR)
 		.unwrap()
@@ -39,48 +41,43 @@ fn main() {
 
             Tag {
                 content,
-                id: name.replace(".md", ""),
+                id: name.trim_end_matches(".md").to_string(),
                 frontmatter: data,
             }
         })
         .collect();
 
-	let tag_choice = format!(
-		r#"
-    #[allow(non_camel_case_types, clippy::upper_case_acronyms)]
-    #[derive(Clone, Debug, poise::ChoiceParameter)]
-    pub enum Choice {{
-    {}
-    }}"#,
-        tags
-			.iter()
-			.map(|t| format!("#[name = \"{}\"]\n{}", t.id, t.id.replace('-', "_")))
-			.collect::<Vec<String>>()
-			.join(",\n")
-	);
+	let tag_names: Vec<String> = tags.iter().map(|t| format!("{},", t.id)).collect();
 
-	let to_str = format!(
-		r#"
-    impl Choice {{
-    fn as_str(&self) -> &str {{
+	let tag_matches: Vec<String> = tags
+		.iter()
+		.map(|t| format!("Self::{} => \"{}\",", t.id, t.id))
+		.collect();
+
+	writeln!(
+		file,
+		r#"#[allow(non_camel_case_types, clippy::upper_case_acronyms)]
+#[derive(Clone, Debug, poise::ChoiceParameter)]
+pub enum Choice {{
+    {}
+}}"#,
+		tag_names.join("\n")
+	)
+	.unwrap();
+
+	writeln!(
+		file,
+		r#"impl Choice {{
+  fn as_str(&self) -> &str {{
     match &self {{
-    {}
+      {}
     }}
-    }}
-    }}
-    "#,
-        tags
-			.iter()
-			.map(|t| {
-				format!("Self::{} => \"{}\",", t.id.replace('-', "_"), t.id)
-			})
-			.collect::<Vec<String>>()
-			.join("\n")
-	);
+  }}
+}}"#,
+		tag_matches.join("\n")
+	)
+	.unwrap();
 
-	let contents = Vec::from([tag_choice, to_str]).join("\n\n");
-
-	fs::write(generated, contents).unwrap();
 	println!(
 		"cargo:rustc-env=TAGS={}",
 		// make sure we can deserialize with env! at runtime

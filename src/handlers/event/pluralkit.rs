@@ -40,5 +40,5 @@ pub async fn handle(_: &Context, msg: &Message, data: &Data) -> Result<()> {
 		data.storage.store_user_plurality(sender).await?;
 	}
 
-	return Ok(());
+	Ok(())
 }

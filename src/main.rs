@@ -4,14 +4,11 @@
 
 use std::sync::Arc;
 
-
 use eyre::{eyre, Context as _, Report, Result};
 use log::{info, trace, warn};
 
 use octocrab::Octocrab;
-use poise::{
-	serenity_prelude as serenity, Framework, FrameworkOptions,
-};
+use poise::{serenity_prelude as serenity, Framework, FrameworkOptions};
 
 use owo_colors::OwoColorize;
 use redis::ConnectionLike;

@@ -1,16 +1,10 @@
-
-
 use eyre::{eyre, OptionExt, Result};
 use log::{debug, trace};
 use poise::serenity_prelude::{
 	ChannelType, Context, CreateAllowedMentions, CreateMessage, GuildChannel,
 };
 
-
-pub async fn handle(
-	ctx: &Context,
-	thread: &GuildChannel,
-) -> Result<()> {
+pub async fn handle(ctx: &Context, thread: &GuildChannel) -> Result<()> {
 	if thread.kind != ChannelType::PublicThread {
 		trace!("Not doing support onboard in non-public thread channel");
 		return Ok(());
