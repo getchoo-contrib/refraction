@@ -2,13 +2,15 @@
 #![allow(clippy::missing_errors_doc)]
 #![forbid(unsafe_code)]
 
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 use eyre::{eyre, Context as _, Report, Result};
 use log::{info, trace, warn};
 
 use octocrab::Octocrab;
-use poise::{serenity_prelude as serenity, Framework, FrameworkOptions};
+use poise::{
+	serenity_prelude as serenity, EditTracker, Framework, FrameworkOptions, PrefixFrameworkOptions,
+};
 
 use owo_colors::OwoColorize;
 use redis::ConnectionLike;
@@ -105,6 +107,14 @@ async fn main() -> Result<()> {
 
 		event_handler: |ctx, event, framework, data| {
 			Box::pin(handlers::handle_event(ctx, event, framework, data))
+		},
+
+		prefix_options: PrefixFrameworkOptions {
+			prefix: Some(".".into()),
+			edit_tracker: Some(Arc::from(EditTracker::for_timespan(Duration::from_secs(
+				3600,
+			)))),
+			..Default::default()
 		},
 
 		..Default::default()
