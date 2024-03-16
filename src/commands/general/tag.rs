@@ -13,7 +13,7 @@ include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 static TAGS: Lazy<Vec<Tag>> = Lazy::new(|| serde_json::from_str(env!("TAGS")).unwrap());
 
 /// Send a tag
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(slash_command, prefix_command, help_text_fn = help)]
 pub async fn tag(
 	ctx: Context<'_>,
 	#[description = "the tag to send"] name: Choice,
@@ -68,4 +68,14 @@ pub async fn tag(
 	ctx.send(reply).await?;
 
 	Ok(())
+}
+
+fn help() -> String {
+	format!(
+		"Available tags:\n{}",
+		TAGS.iter()
+			.map(|tag| format!("**{}**: {}", tag.id, tag.frontmatter.title))
+			.collect::<Vec<String>>()
+			.join("\n"),
+	)
 }

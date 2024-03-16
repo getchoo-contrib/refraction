@@ -7,6 +7,6 @@ use log::trace;
 #[poise::command(slash_command, prefix_command, ephemeral)]
 pub async fn ping(ctx: Context<'_>) -> Result<()> {
 	trace!("Running ping command!");
-	ctx.reply("Pong!").await?;
+	ctx.say("Pong!").await?;
 	Ok(())
 }
