@@ -59,7 +59,10 @@ pub async fn handle(error: FrameworkError<'_, Data, Report>) {
 				response += &format!("{help_text}\n\n");
 			}
 
-			response += "**Tip:** Edit your message to update the response.\n";
+			if ctx.command().invoke_on_edit {
+				response += "**Tip:** Edit your message to update the response.\n";
+			}
+
 			response += &format!(
 				"For more information, refer to /help {}.",
 				ctx.command().name
