@@ -6,7 +6,7 @@ use poise::serenity_prelude::CreateEmbed;
 use poise::CreateReply;
 
 /// Returns GitHub stargazer count
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(slash_command, prefix_command, track_edits = true)]
 pub async fn stars(ctx: Context<'_>) -> Result<()> {
 	trace!("Running stars command");
 

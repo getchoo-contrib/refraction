@@ -44,6 +44,32 @@ pub async fn handle(error: FrameworkError<'_, Data, Report>) {
 			);
 		}
 
+		FrameworkError::ArgumentParse {
+			error, input, ctx, ..
+		} => {
+			let mut response = String::new();
+
+			if let Some(input) = input {
+				response += &format!("**Cannot parse `{input}` as argument: {error}**\n\n");
+			} else {
+				response += &format!("**{error}**\n\n");
+			}
+
+			if let Some(help_text) = ctx.command().help_text.as_ref() {
+				response += &format!("{help_text}\n\n");
+			}
+
+			response += "**Tip:** Edit your message to update the response.\n";
+			response += &format!(
+				"For more information, refer to /help {}.",
+				ctx.command().name
+			);
+
+			if let Err(e) = ctx.say(response).await {
+				error!("Unhandled error displaying ArgumentParse error\n{e:#?}");
+			}
+		}
+
 		error => {
 			if let Err(e) = poise::builtins::on_error(error).await {
 				error!("Unhandled error occurred:\n{e:#?}");

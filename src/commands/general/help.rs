@@ -4,8 +4,11 @@ use poise::{builtins, samples::HelpConfiguration};
 use crate::Context;
 
 /// View the help menu
-#[poise::command(slash_command, prefix_command)]
-pub async fn help(ctx: Context<'_>, command: Option<String>) -> Result<()> {
+#[poise::command(slash_command, prefix_command, track_edits = true)]
+pub async fn help(
+	ctx: Context<'_>,
+	#[description = "provide information about a specific command"] command: Option<String>,
+) -> Result<()> {
 	builtins::help(
 		ctx,
 		command.as_deref(),
