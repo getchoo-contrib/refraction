@@ -10,6 +10,8 @@ use poise::CreateReply;
 pub async fn members(ctx: Context<'_>) -> Result<()> {
 	trace!("Running members command");
 
+	ctx.defer().await?;
+
 	let guild_id = ctx.guild_id().ok_or_eyre("Couldn't get guild ID!")?;
 	let guild = ctx
 		.http()

@@ -13,6 +13,9 @@ pub async fn rory(
 	#[description = "specify a Rory ID"] id: Option<u64>,
 ) -> Result<()> {
 	trace!("Running rory command");
+
+	ctx.defer().await?;
+
 	let rory = rory::get(id).await?;
 
 	let embed = {

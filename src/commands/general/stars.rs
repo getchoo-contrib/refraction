@@ -10,6 +10,8 @@ use poise::CreateReply;
 pub async fn stars(ctx: Context<'_>) -> Result<()> {
 	trace!("Running stars command");
 
+	ctx.defer().await?;
+
 	let prismlauncher = ctx
 		.data()
 		.octocrab

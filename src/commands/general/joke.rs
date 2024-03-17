@@ -8,6 +8,9 @@ use log::trace;
 #[poise::command(slash_command, prefix_command, track_edits = true)]
 pub async fn joke(ctx: Context<'_>) -> Result<()> {
 	trace!("Running joke command");
+
+	ctx.defer().await?;
+
 	let joke = dadjoke::get_joke().await?;
 
 	ctx.say(joke).await?;
