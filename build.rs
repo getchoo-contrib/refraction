@@ -18,7 +18,7 @@ fn main() {
 		.map(|f| f.unwrap().file_name().to_string_lossy().to_string())
 		.collect();
 
-	let tags: Vec<Tag> = tag_files
+	let mut tags: Vec<Tag> = tag_files
         .clone()
         .into_iter()
         .map(|name| {
@@ -46,6 +46,8 @@ fn main() {
             }
         })
         .collect();
+
+	tags.sort_by(|t1, t2| t1.id.cmp(&t2.id));
 
 	let tag_names: Vec<String> = tags.iter().map(|t| format!("{},", t.id)).collect();
 
