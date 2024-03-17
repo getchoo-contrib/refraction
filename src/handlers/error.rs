@@ -1,10 +1,20 @@
 use crate::consts;
 use crate::Data;
+use std::fmt::Write;
 
 use eyre::Report;
 use log::error;
 use poise::serenity_prelude::{CreateEmbed, Timestamp};
 use poise::{CreateReply, FrameworkError};
+
+// getchoo: i like writeln! and don't like
+macro_rules! writelne {
+	($dst:expr, $($arg:tt)*) => {
+		if let Err(why) = writeln!($dst, $($arg)*) {
+			error!("We somehow cannot write to what should be on the heap. What are you using this macro with? Anyways, here's the error:\n{why:#?}");
+		}
+	}
+}
 
 pub async fn handle(error: FrameworkError<'_, Data, Report>) {
 	match error {
@@ -50,26 +60,33 @@ pub async fn handle(error: FrameworkError<'_, Data, Report>) {
 			let mut response = String::new();
 
 			if let Some(input) = input {
-				response += &format!("**Cannot parse `{input}` as argument: {error}**\n\n");
+				writelne!(
+					&mut response,
+					"**Cannot parse `{input}` as argument: {error}**\n"
+				);
 			} else {
-				response += &format!("**{error}**\n\n");
+				writelne!(&mut response, "**{error}**\n");
 			}
 
 			if let Some(help_text) = ctx.command().help_text.as_ref() {
-				response += &format!("{help_text}\n\n");
+				writelne!(&mut response, "{help_text}\n");
 			}
 
 			if ctx.command().invoke_on_edit {
-				response += "**Tip:** Edit your message to update the response.\n";
+				writelne!(
+					&mut response,
+					"**Tip:** Edit your message to update the response."
+				);
 			}
 
-			response += &format!(
+			writelne!(
+				&mut response,
 				"For more information, refer to /help {}.",
 				ctx.command().name
 			);
 
-			if let Err(e) = ctx.say(response).await {
-				error!("Unhandled error displaying ArgumentParse error\n{e:#?}");
+			if let Err(why) = ctx.say(response).await {
+				error!("Unhandled error displaying ArgumentParse error\n{why:#?}");
 			}
 		}
 
