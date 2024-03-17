@@ -71,11 +71,11 @@ pub async fn tag(
 }
 
 fn help() -> String {
-	format!(
-		"Available tags:\n{}",
-		TAGS.iter()
-			.map(|tag| format!("**{}**: {}", tag.id, tag.frontmatter.title))
-			.collect::<Vec<String>>()
-			.join("\n"),
-	)
+	let mut tag_ids = TAGS
+		.iter()
+		.map(|tag| tag.id.clone())
+		.collect::<Vec<String>>();
+	tag_ids.sort();
+
+	format!("Available tags: {}", tag_ids.join(", "))
 }
