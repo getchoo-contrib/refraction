@@ -44,7 +44,9 @@ async fn member_can_view_channel(
 				.ok_or_else(|| eyre!("Couldn't get GuildChannel from ChannelID {parent_id}!"))?
 		}
 
-		_ => channel.to_owned(),
+		ChannelType::Text | ChannelType::News => channel.to_owned(),
+
+		_ => return Ok(false),
 	};
 
 	let can_view = guild
