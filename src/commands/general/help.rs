@@ -13,9 +13,7 @@ pub async fn help(
 		ctx,
 		command.as_deref(),
 		HelpConfiguration {
-			extra_text_at_bottom: &format!(
-				"Use /help for more information about a specific command!"
-			),
+			extra_text_at_bottom: "Use /help for more information about a specific command!",
 			..HelpConfiguration::default()
 		},
 	)
