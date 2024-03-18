@@ -39,19 +39,33 @@ pub async fn handle(
 				return Ok(());
 			}
 
-			// detect PK users first to make sure we don't respond to unproxied messages
-			pluralkit::handle(ctx, new_message, data).await?;
-
+			// detect PK users first to make sure we don't respond to proxied messages
 			if data.storage.is_user_plural(new_message.author.id).await?
 				&& pluralkit::is_message_proxied(new_message).await?
 			{
-				debug!("Not replying to unproxied PluralKit message");
+				debug!("Not replying to proxied PluralKit message");
 				return Ok(());
 			}
 
+			let system_user_id = pluralkit::get_original_author(new_message).await?;
+
+			if let Some(system_user_id) = system_user_id {
+				data.storage.store_user_plurality(system_user_id).await?;
+			}
+
+			let original_author = system_user_id.or_else(|| {
+				new_message
+					.webhook_id
+					.is_none()
+					.then_some(new_message.author.id)
+			});
+
 			eta::handle(ctx, new_message).await?;
-			expand_link::handle(ctx, new_message).await?;
 			analyze_logs::handle(ctx, new_message, data).await?;
+
+			if let Some(author) = original_author {
+				expand_link::handle(ctx, new_message, author).await?;
+			}
 		}
 
 		FullEvent::ReactionAdd { add_reaction } => {

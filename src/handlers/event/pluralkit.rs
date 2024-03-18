@@ -1,28 +1,32 @@
-use crate::{api, Data};
+use crate::api;
 use std::time::Duration;
 
 use eyre::Result;
 use log::{debug, trace};
-use poise::serenity_prelude::{Context, Message};
+use poise::serenity_prelude::{Message, UserId};
 use tokio::time::sleep;
 
 const PK_DELAY: Duration = Duration::from_secs(1);
 
-pub async fn is_message_proxied(message: &Message) -> Result<bool> {
+pub async fn is_message_proxied(msg: &Message) -> Result<bool> {
+	if msg.webhook_id.is_some() {
+		return Ok(false);
+	}
+
 	trace!(
 		"Waiting on PluralKit API for {} seconds",
 		PK_DELAY.as_secs()
 	);
 	sleep(PK_DELAY).await;
 
-	let proxied = api::pluralkit::get_sender(message.id).await.is_ok();
+	let proxied = api::pluralkit::get_sender(msg.id).await.is_ok();
 
 	Ok(proxied)
 }
 
-pub async fn handle(_: &Context, msg: &Message, data: &Data) -> Result<()> {
+pub async fn get_original_author(msg: &Message) -> Result<Option<UserId>> {
 	if msg.webhook_id.is_none() {
-		return Ok(());
+		return Ok(None);
 	}
 
 	debug!(
@@ -36,9 +40,5 @@ pub async fn handle(_: &Context, msg: &Message, data: &Data) -> Result<()> {
 	);
 	sleep(PK_DELAY).await;
 
-	if let Ok(sender) = api::pluralkit::get_sender(msg.id).await {
-		data.storage.store_user_plurality(sender).await?;
-	}
-
-	Ok(())
+	Ok(Some(api::pluralkit::get_sender(msg.id).await?))
 }

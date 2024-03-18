@@ -5,7 +5,7 @@ use log::{debug, trace};
 use once_cell::sync::Lazy;
 use poise::serenity_prelude::{
 	Cache, CacheHttp, ChannelId, ChannelType, Colour, Context, CreateEmbed, CreateEmbedAuthor,
-	CreateEmbedFooter, GuildChannel, Member, Message, MessageId, Permissions,
+	CreateEmbedFooter, GuildChannel, Member, Message, MessageId, Permissions, UserId,
 };
 use regex::Regex;
 
@@ -99,7 +99,11 @@ pub async fn to_embed(
 	Ok(embed)
 }
 
-pub async fn from_message(ctx: &Context, msg: &Message) -> Result<Vec<CreateEmbed>> {
+pub async fn from_message(
+	ctx: &Context,
+	msg: &Message,
+	author_id: UserId,
+) -> Result<Vec<CreateEmbed>> {
 	static MESSAGE_PATTERN: Lazy<Regex> = Lazy::new(|| {
 		Regex::new(r"(?:https?:\/\/)?(?:canary\.|ptb\.)?discord(?:app)?\.com\/channels\/(?<server_id>\d+)\/(?<channel_id>\d+)\/(?<message_id>\d+)").unwrap()
 	});
@@ -108,7 +112,7 @@ pub async fn from_message(ctx: &Context, msg: &Message) -> Result<Vec<CreateEmbe
 		debug!("Not resolving message in DM");
 		return Ok(Vec::new());
 	};
-	let author = guild_id.member(ctx, msg.author.id).await?;
+	let author = guild_id.member(ctx, author_id).await?;
 
 	let matches = MESSAGE_PATTERN
 		.captures_iter(&msg.content)
